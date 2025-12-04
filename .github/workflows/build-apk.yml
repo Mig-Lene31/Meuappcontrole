@@ -1,41 +1,44 @@
-name: Build APK
+name: Build Android APK Clean
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
+    name: Build APK
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout do código
+      - name: Pegar o código do repositório
         uses: actions/checkout@v3
 
       - name: Configurar Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '18'
+
+      - name: Instalar Java 17
+        run: |
+          sudo apt-get update
+          sudo apt-get install openjdk-17-jdk -y
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
 
       - name: Instalar dependências
-        run: npm install
+        run: |
+          npm ci
+          npm install -g react-native-cli
 
-      - name: Instalar Yarn
-        run: npm install --global yarn
-
-      - name: Configurar JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Build APK
+      - name: Compilar APK Android
         run: |
           cd android
-          ./gradlew assembleDebug
+          ./gradlew clean assembleDebug
 
-      - name: Salvar APK como artefato
+      - name: Fazer upload do APK
         uses: actions/upload-artifact@v4
         with:
           name: MeuAppControle-APK
-          path: android/app/build/outputs
+          path: android/app/build/outputs/apk/debug/app-debug.apk
