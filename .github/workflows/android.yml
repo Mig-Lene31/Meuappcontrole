@@ -20,11 +20,13 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Configurar Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'   # <-- altere aqui para 17, não 21
+      - name: Instalar e configurar Java 17
+        run: |
+          sudo apt-get update
+          sudo apt-get install openjdk-17-jdk -y
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
+          echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
 
       - name: Instalar dependências
         run: |
