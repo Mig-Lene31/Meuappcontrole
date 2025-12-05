@@ -7,7 +7,8 @@ workflows:
         NODE_ENV: production
       node: latest
       java: 17
-      android: 33
+      groups:
+        - android          # usa o grupo pré-configurado do Codemagic
     scripts:
       - name: Install dependencies
         script: |
@@ -21,7 +22,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - YOUR_EMAIL_HERE
+          - mislene@gmail.com      # coloque aqui SEU email real
         notify:
           success: true
           failure: true
