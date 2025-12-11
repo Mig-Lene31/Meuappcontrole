@@ -2,27 +2,41 @@ workflows:
   android-release:
     name: Build Android Release
     max_build_duration: 60
+
     environment:
-      vars:
-        MYAPP_UPLOAD_STORE_FILE: $MYAPP_UPLOAD_STORE_FILE
-        MYAPP_UPLOAD_STORE_PASSWORD: $MYAPP_UPLOAD_STORE_PASSWORD
-        MYAPP_UPLOAD_KEY_ALIAS: $MYAPP_UPLOAD_KEY_ALIAS
-        MYAPP_UPLOAD_KEY_PASSWORD: $MYAPP_UPLOAD_KEY_PASSWORD
+      flutter: "false"
       node: "18"
       java: "17"
+      groups:
+        - keystore_credentials
+      vars:
+        MYAPP_UPLOAD_STORE_FILE: keystore.jks
+        MYAPP_UPLOAD_KEY_ALIAS: upload
+      cache:
+        cache_paths:
+          - ~/.gradle
+          - ~/.cache
+          - node_modules
+
     scripts:
-      - name: Install system deps
+      - name: Install Node dependencies
         script: |
-          echo "Instalando dependências do projeto..."
-          npm ci
-      - name: Prepare Android SDK
+          echo "Instalando dependências NPM..."
+          npm install --legacy-peer-deps
+
+      - name: Install Android dependencies
         script: |
-          echo "Android SDK presumido presente no runner Codemagic"
-      - name: Run Android release build
+          echo "Instalando dependências Android..."
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34"
+
+      - name: Build Android Release
         script: |
-          set -e
+          echo "Iniciando build Android..."
           cd android
-          ./gradlew assembleRelease -Pandroid.injected.testOnly=false
+          ./gradlew clean
+          ./gradlew assembleRelease -x lint -Pandroid.injected.testOnly=false
+
     artifacts:
       - android/app/build/outputs/**/*.apk
       - android/app/build/outputs/**/*.aab
