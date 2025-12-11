@@ -8,7 +8,7 @@ workflows:
         MYAPP_UPLOAD_STORE_PASSWORD: $MYAPP_UPLOAD_STORE_PASSWORD
         MYAPP_UPLOAD_KEY_ALIAS: $MYAPP_UPLOAD_KEY_ALIAS
         MYAPP_UPLOAD_KEY_PASSWORD: $MYAPP_UPLOAD_KEY_PASSWORD
-      node: "lts/*"
+      node: "18"
       java: "17"
     scripts:
       - name: Install system deps
