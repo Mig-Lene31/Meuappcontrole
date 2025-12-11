@@ -2,22 +2,24 @@ workflows:
   android-release:
     name: Android Release Build
     max_build_duration: 60
+
     environment:
-      vars:
-        PACKAGE_NAME: "com.meuappcontrole"
       java: 17
       node: 18
-      yarn: true
-    scripts:
-      - name: Install dependencies
-        script: |
-          yarn install --frozen-lockfile
+      vars:
+        PACKAGE_NAME: "com.meuappcontrole"
 
-      - name: Install Android dependencies
+    scripts:
+      - name: Instalar dependências
         script: |
+          npm install --legacy-peer-deps
+
+      - name: Instalar ferramentas Android
+        script: |
+          yes | sdkmanager --licenses
           sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
-      - name: Build Android release
+      - name: Gerar APK release
         script: |
           cd android
           ./gradlew assembleRelease
