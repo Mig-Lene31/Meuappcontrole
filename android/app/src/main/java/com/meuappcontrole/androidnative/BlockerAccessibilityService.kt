@@ -5,9 +5,9 @@ import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import android.util.Log
 import com.meuappcontrole.BlockActivity
 
 class BlockerAccessibilityService : AccessibilityService() {
@@ -16,13 +16,16 @@ class BlockerAccessibilityService : AccessibilityService() {
     private val handler = Handler(Looper.getMainLooper())
 
     override fun onServiceConnected() {
-        val info = AccessibilityServiceInfo()
-        info.eventTypes =
-            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
-        info.packageNames = null
-        info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
-        info.flags =
-            AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
+        val info = AccessibilityServiceInfo().apply {
+            eventTypes =
+                AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
+                AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
+            packageNames = null
+            feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
+            flags =
+                AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
+                AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
+        }
         serviceInfo = info
         Log.i(TAG, "Accessibility service connected")
     }
@@ -34,6 +37,7 @@ class BlockerAccessibilityService : AccessibilityService() {
             val root = rootInActiveWindow ?: return
 
             val url = findUrlInNode(root)
+
             if (url != null) {
                 val host = extractHost(url)
                 if (host != null && isHostBlocked(host)) {
@@ -87,7 +91,7 @@ class BlockerAccessibilityService : AccessibilityService() {
         return try {
             val fixed = if (!url.startsWith("http")) "http://$url" else url
             android.net.Uri.parse(fixed).host?.replaceFirst("^www\\.".toRegex(), "")
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -97,10 +101,10 @@ class BlockerAccessibilityService : AccessibilityService() {
         val list = prefs.getStringSet("blocked_hosts", null)
 
         if (list != null)
-            return list.any { host.contains(it) }
+            return list.any { host.contains(it, ignoreCase = true) }
 
         val defaults = listOf("bet", "blaze", "bet365", "pixbet", "betano", "sportingbet")
-        return defaults.any { host.contains(it) }
+        return defaults.any { host.contains(it, ignoreCase = true) }
     }
 
     private fun isPackageBlocked(pkg: String): Boolean {
@@ -122,7 +126,7 @@ class BlockerAccessibilityService : AccessibilityService() {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
                 startActivity(home)
-            }, 200)
+            }, 300)
 
         } catch (t: Throwable) {
             Log.e(TAG, "launchBlockActivity error", t)
