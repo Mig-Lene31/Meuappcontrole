@@ -1,27 +1,32 @@
 apply plugin: "com.android.application"
+apply plugin: "com.facebook.react"
+
+import com.android.build.OutputFile
+
+def enableSeparateBuildPerCPUArchitecture = false
 
 android {
-    compileSdkVersion 34
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
         applicationId "com.meuappcontrole"
-        minSdkVersion 24
-        targetSdkVersion 34
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
 
     signingConfigs {
         release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-                storeFile file(MYAPP_UPLOAD_STORE_FILE)
-                storePassword MYAPP_UPLOAD_STORE_PASSWORD
-                keyAlias MYAPP_UPLOAD_KEY_ALIAS
-                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+                storeFile file(System.getenv("MYAPP_UPLOAD_STORE_FILE"))
+                storePassword System.getenv("MYAPP_UPLOAD_STORE_PASSWORD")
+                keyAlias System.getenv("MYAPP_UPLOAD_KEY_ALIAS")
+                keyPassword System.getenv("MYAPP_UPLOAD_KEY_PASSWORD")
             } else {
                 def props = new Properties()
-                file("keystore.properties").withInputStream { props.load(it) }
-
+                file("../keystore.properties").withInputStream { props.load(it) }
                 storeFile file(props["storeFile"])
                 storePassword props["storePassword"]
                 keyAlias props["keyAlias"]
@@ -35,10 +40,20 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
+    }
+
+    packagingOptions {
+        jniLibs.useLegacyPackaging = true
     }
 }
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "com.facebook.react:react-android"
+    implementation "androidx.multidex:multidex:2.0.1"
 }
+
+apply from: "../../node_modules/react-native/react.gradle"

@@ -4,15 +4,13 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".MainApplication"
         android:label="MeuAppControle"
-        android:allowBackup="false"
-        android:supportsRtl="true"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:supportsRtl="true">
 
         <activity
             android:name=".MainActivity"
@@ -24,42 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <!-- ACCESSIBILITY SERVICE -->
-        <service
-            android:name="com.meuappcontrole.androidnative.BlockerAccessibilityService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/accessibility_service_config"/>
-        </service>
-
-        <!-- VPN BLOCKER -->
-        <service
-            android:name="com.meuappcontrole.androidnative.BlockVPNService"
-            android:permission="android.permission.BIND_VPN_SERVICE"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.net.VpnService"/>
-            </intent-filter>
-        </service>
-
-        <!-- DEVICE ADMIN -->
-        <receiver
-            android:name="com.meuappcontrole.androidnative.AdminReceiver"
-            android:permission="android.permission.BIND_DEVICE_ADMIN"
-            android:exported="true">
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/device_admin_receiver" />
-            <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-            </intent-filter>
-        </receiver>
 
     </application>
 
