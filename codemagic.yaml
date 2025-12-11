@@ -4,24 +4,28 @@ workflows:
     max_build_duration: 60
 
     environment:
-      node: "18"
-      java: "17"
+      flutter: false
+      node: 18
+      java: 17
       groups:
         - keystore_credentials
       vars:
         MYAPP_UPLOAD_STORE_FILE: keystore.jks
         MYAPP_UPLOAD_KEY_ALIAS: upload
 
-    cache:
-      cache_paths:
-        - ~/.gradle
-        - ~/.cache
-        - node_modules
-
     scripts:
-      - name: Install Node dependencies
+      - name: Hard Clean Environment
         script: |
-          echo "Instalando dependências NPM..."
+          echo "🧹 Limpando caches e daemons..."
+          rm -rf ~/.gradle/caches
+          rm -rf ~/.gradle/daemon
+          rm -rf ~/.gradle/native
+          rm -rf ~/.gradle/wrapper
+          rm -rf android/.gradle
+          rm -rf android/app/build
+          rm -rf node_modules
+
+          echo "Reinstalando dependências..."
           npm install --legacy-peer-deps
 
       - name: Install Android dependencies
