@@ -26,5 +26,3 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.apk
       - android/app/build/outputs/**/*.aab
-    publishing:
-      scripts: []
