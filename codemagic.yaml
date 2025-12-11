@@ -12,11 +12,12 @@ workflows:
       vars:
         MYAPP_UPLOAD_STORE_FILE: keystore.jks
         MYAPP_UPLOAD_KEY_ALIAS: upload
-      cache:
-        cache_paths:
-          - ~/.gradle
-          - ~/.cache
-          - node_modules
+
+    cache:
+      cache_paths:
+        - ~/.gradle
+        - ~/.cache
+        - node_modules
 
     scripts:
       - name: Install Node dependencies
