@@ -1,9 +1,8 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
+apply plugin: "kotlin-android"
 
 import com.android.build.OutputFile
-
-def enableSeparateBuildPerCPUArchitecture = false
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -26,11 +25,14 @@ android {
                 keyPassword System.getenv("MYAPP_UPLOAD_KEY_PASSWORD")
             } else {
                 def props = new Properties()
-                file("../keystore.properties").withInputStream { props.load(it) }
-                storeFile file(props["storeFile"])
-                storePassword props["storePassword"]
-                keyAlias props["keyAlias"]
-                keyPassword props["keyPassword"]
+                def f = file("../keystore.properties")
+                if (f.exists()) {
+                  f.withInputStream { props.load(it) }
+                  storeFile file(props["storeFile"])
+                  storePassword props["storePassword"]
+                  keyAlias props["keyAlias"]
+                  keyPassword props["keyPassword"]
+                }
             }
         }
     }
@@ -53,6 +55,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "androidx.appcompat:appcompat:1.6.1"
     implementation "com.facebook.react:react-android"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.0"
     implementation "androidx.multidex:multidex:2.0.1"
 }
 
