@@ -14,14 +14,10 @@ workflows:
         script: |
           npm install --legacy-peer-deps
 
-      - name: Instalar ferramentas Android
-        script: |
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-
-      - name: Gerar APK release
+      - name: Build Android Release
         script: |
           cd android
+          ./gradlew clean
           ./gradlew assembleRelease
 
     artifacts:
