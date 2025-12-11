@@ -15,7 +15,14 @@ class BlockActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val reason = intent.getStringExtra("blocked_reason") ?: "Limite atingido"
+        // tenta ler tempo exato de SharedPreferences
+        val prefs = getSharedPreferences("meuapp_prefs", MODE_PRIVATE)
+        val until = prefs.getLong("block_until", 0L)
+        if (until > System.currentTimeMillis()) {
+            remainingMs = until - System.currentTimeMillis()
+        }
+
+        val reason = intent.getStringExtra("blocked_reason") ?: prefs.getString("block_reason", "Limite atingido")
 
         val layout = LinearLayout(this)
         layout.orientation = LinearLayout.VERTICAL
@@ -40,13 +47,12 @@ class BlockActivity : Activity() {
         ok.text = "Entendi"
         ok.isEnabled = false
         ok.setOnClickListener {
-            // button desabilitado enquanto período não expira
+            // só habilita quando bloqueio terminar
         }
         layout.addView(ok)
 
         setContentView(layout, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
 
-        // contador regressivo simples (pode carregar tempo exato de SharedPreferences)
         object : CountDownTimer(remainingMs, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val hours = millisUntilFinished / (1000*60*60)
