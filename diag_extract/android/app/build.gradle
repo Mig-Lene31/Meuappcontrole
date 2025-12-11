@@ -59,3 +59,4 @@ dependencies {
     implementation "androidx.multidex:multidex:2.0.1"
 }
 
+apply from: "../../node_modules/react-native/react.gradle"
