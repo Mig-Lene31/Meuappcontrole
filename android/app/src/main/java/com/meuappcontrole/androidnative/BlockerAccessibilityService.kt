@@ -66,11 +66,13 @@ class BlockerAccessibilityService : AccessibilityService() {
         while (queue.isNotEmpty()) {
             val current = queue.removeFirst()
 
-            val text = current.text?.toString()
-            if (text != null && looksLikeUrl(text)) return text
+            current.text?.toString()?.let {
+                if (looksLikeUrl(it)) return it
+            }
 
-            val desc = current.contentDescription?.toString()
-            if (desc != null && looksLikeUrl(desc)) return desc
+            current.contentDescription?.toString()?.let {
+                if (looksLikeUrl(it)) return it
+            }
 
             for (i in 0 until current.childCount) {
                 current.getChild(i)?.let { queue.add(it) }
