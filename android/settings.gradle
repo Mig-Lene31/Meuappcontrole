@@ -1,2 +1,3 @@
 rootProject.name = 'MeuAppControle'
 include ':app'
+apply from: file("../node_modules/react-native/react.gradle")
