@@ -1,18 +1,6 @@
-import React, {useEffect} from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import StackRoutes from './src/navigation/StackRoutes';
-import { navigationRef } from './src/navigation/RootNavigation';
-import BlockManager from './src/services/blockManager';
+import React from 'react';
+import AppNavigator from './src/navigation/AppNavigator';
 
-export default function App() {
-  useEffect(() => {
-    // checar bloqueio no start
-    BlockManager.init();
-  }, []);
-
-  return (
-    <NavigationContainer ref={navigationRef}>
-      <StackRoutes />
-    </NavigationContainer>
-  );
+export default function App(){
+  return <AppNavigator />;
 }
